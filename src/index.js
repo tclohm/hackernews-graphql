@@ -2,18 +2,7 @@ const { GraphQLServer } = require('graphql-yoga');
 
 // graphQL schema, defines simple query called info
 // schema has three special root types: query, mutation, subscription
-const typeDefs = `
-	type Query {
-		info: String!
-		feed: [Link!]!
-	}
-
-	type Link {
-		id: ID!
-		description: String!
-		url: String!
-	}
-`;
+// const typeDefs;
 
 let links = [{
 	id: 'link-0',
@@ -21,6 +10,7 @@ let links = [{
 	description: 'heaps of bad videos'
 }];
 
+// actual implementation of graphQL schema
 // structure is identical of type definition inside typeDefs: Query.info
 const resolvers = {
 	Query: {
@@ -37,7 +27,7 @@ const resolvers = {
 
 // schema and resolvers are bundled and passed to the GraphQLServer which is imported from graphql-yoga
 const server = new GraphQLServer({
-	typeDefs,
+	typeDefs: './src/schema.graphql',
 	resolvers
 });
 
