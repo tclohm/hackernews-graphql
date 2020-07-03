@@ -13,7 +13,7 @@ generator client {
 // 			to a table in the underlying database
 model Link {
 	id 			Int 	 @id @default(autoincrement())
-	createdAt 	DataTime @default(now())
+	createdAt 	DateTime @default(now())
 	description String
 	url 		String
 }
