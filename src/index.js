@@ -5,23 +5,53 @@ const { GraphQLServer } = require('graphql-yoga');
 // const typeDefs;
 
 let links = [{
-	id: 'link-0',
-	url: 'www.youtube.com',
-	description: 'heaps of bad videos'
-}];
+		id: 'link-0',
+		url: 'www.youtube.com',
+		description: 'heaps of bad videos'
+	},
+	{
+		id: 'link-1',
+		url: 'www.vimeo.com',
+		description: 'better quality videos'
+	},
+	{
+		id: 'link-2',
+		url: 'www.netflix.com',
+		description: 'industry shaker'
+	}
+];
 
 // actual implementation of graphQL schema
 // structure is identical of type definition inside typeDefs: Query.info
+let idCount = links.length
 const resolvers = {
 	Query: {
 		info: () => `This is the API of a Hackernews Clone`,
-		feed:() => links,
+		feed: () => links,
+		link: (parent, args) => links.find(link => args.id == link.id)
 	},
-
-	Link: {
-		id: (parent) => parent.id,
-		description: (parent) => parent.description,
-		url: (parent) => parent.url,
+	Mutation: {
+		post: (parent, args) => {
+			const link = {
+				id: `link-${idCount++}`,
+				description: args.description,
+				url: args.url,
+			}
+			links.push(link)
+			return link
+		},
+		updateLink: (parent, args) => {
+			let link = links.find(link => link.id == args.id)
+			link.url = (args.url == undefined) ? link.url : args.url
+			link.description = (args.description == undefined) ? link.description : args.description 
+			return link
+		},
+		deleteLink: (parent, args) => {
+			let link = links.find(el => el.id == args.id)
+			let index = links.indexOf(link)
+			links.splice(index, 1)
+			return link
+		}
 	}
 };
 
