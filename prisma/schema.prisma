@@ -1,0 +1,19 @@
+// MARK: -- specifies database connection
+datasource db {
+	provider = "sqlite"
+	url = "file:./dev.db"
+}
+
+// MARK: -- indicates if we want to generate a Prisma Client
+generator client {
+	provider = "prisma-client-js"
+}
+
+// MARK: -- defines the application models. Each model will be mapped
+// 			to a table in the underlying database
+model Link {
+	id 			Int 	 @id @default(autoincrement())
+	createdAt 	DataTime @default(now())
+	description String
+	url 		String
+}
