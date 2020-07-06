@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const { APP_SECRET, getUserId } = require('../utils')
 
@@ -54,13 +54,25 @@ function updateLink(parent, args, context, info) {
 		data: {
 			url: args.url ? args.url : found.url,
 			description: args.description ? args.description : found.description,
-			postedBy: { connect: { id: userId } },
+			postedBy: { upsert: { id: userId } },
 		}
 	})
 }
+
+// function deleteLink(parent, args, context, info) {
+// 	const userId = getUserId(context)
+// 	return context.prisma.link.update({
+// 		where: { id: Number(args.id) },
+// 		data: {
+// 			link
+// 		}
+// 	})
+// }
 
 module.exports = {
 	signup,
 	login,
 	post,
+	updateLink,
+	// deleteLink,
 }
