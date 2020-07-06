@@ -59,15 +59,15 @@ function updateLink(parent, args, context, info) {
 	})
 }
 
-// function deleteLink(parent, args, context, info) {
-// 	const userId = getUserId(context)
-// 	return context.prisma.link.update({
-// 		where: { id: Number(args.id) },
-// 		data: {
-// 			link
-// 		}
-// 	})
-// }
+function deleteLink(parent, args, context, info) {
+	const userId = getUserId(context)
+	return context.prisma.link.update({
+		where: { id: Number(args.id) },
+		data: {
+			link
+		}
+	})
+}
 
 module.exports = {
 	signup,
