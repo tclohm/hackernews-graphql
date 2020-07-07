@@ -60,12 +60,8 @@ function updateLink(parent, args, context, info) {
 }
 
 function deleteLink(parent, args, context, info) {
-	const userId = getUserId(context)
-	return context.prisma.link.update({
-		where: { id: Number(args.id) },
-		data: {
-			link
-		}
+	return context.prisma.link.delete({
+		where: { id: Number(args.id) }
 	})
 }
 
@@ -74,5 +70,5 @@ module.exports = {
 	login,
 	post,
 	updateLink,
-	// deleteLink,
+	deleteLink,
 }
