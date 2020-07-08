@@ -51,25 +51,12 @@ async function updateLink(parent, args, context, info) {
 	const userId = getUserId(context)
 	const ID = Number(args.id)
 	const found = await context.prisma.link.findOne({ where: { id: ID } })
-	return context.prisma.user.update({
-		where: { id: userId },
+	return await context.prisma.link.update({
 		data: {
-			links: {
-				upsert: [
-					{
-						create: {
-							url: args.url ? args.url : found.url,
-							description: args.description ? args.description : found.description
-						},
-						update: {
-							url: args.url ? args.url : found.url,
-							description: args.description ? args.description : found.description
-						},
-						where: { id: ID },
-					}
-				],
-			},
+			url: args.url ? args.url : found.url,
+			description: args.description ? args.description : found.description
 		},
+		where: { id: ID }
 	})
 }
 
