@@ -54,7 +54,8 @@ async function updateLink(parent, args, context, info) {
 	return await context.prisma.link.update({
 		data: {
 			url: args.url ? args.url : found.url,
-			description: args.description ? args.description : found.description
+			description: args.description ? args.description : found.description,
+			postedBy: { connect: { id: userId ? userId : found.postedBy } }
 		},
 		where: { id: ID }
 	})
