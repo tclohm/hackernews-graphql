@@ -33,6 +33,9 @@ async function login(parent, args, context, info) {
 	}
 }
 
+// getUserId to retrieve ID of User. ID stored in the JWT that's set in the Authorization header
+// of the incoming HTTP request
+// which user is creating the link
 function post(parent, args, context, info) {
 	const userId = getUserId(context)
 	return context.prisma.link.create({
@@ -44,18 +47,29 @@ function post(parent, args, context, info) {
 	})
 }
 
-function updateLink(parent, args, context, info) {
+async function updateLink(parent, args, context, info) {
 	const userId = getUserId(context)
-	const found = context.prisma.link.findOne({
-		where: { id: Number(args.id) }
-	})
-	return context.prisma.link.update({
-		where: { id: Number(args.id) },
+	const ID = Number(args.id)
+	const found = await context.prisma.link.findOne({ where: { id: ID } })
+	return context.prisma.user.update({
+		where: { id: userId },
 		data: {
-			url: args.url ? args.url : found.url,
-			description: args.description ? args.description : found.description,
-			postedBy: { upsert: { id: userId } },
-		}
+			links: {
+				upsert: [
+					{
+						create: {
+							url: args.url ? args.url : found.url,
+							description: args.description ? args.description : found.description
+						},
+						update: {
+							url: args.url ? args.url : found.url,
+							description: args.description ? args.description : found.description
+						},
+						where: { id: ID },
+					}
+				],
+			},
+		},
 	})
 }
 
