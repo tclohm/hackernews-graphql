@@ -1,12 +1,13 @@
-const { GraphQLServer } = require('graphql-yoga');
+const { GraphQLServer } = require('graphql-yoga')
 const { PrismaClient } = require('@prisma/client')
-
 require('dotenv').config({ path: '.env' })
-
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
 const User = require('./resolvers/User')
 const Link = require('./resolvers/Link')
+const { PubSub } = require('graphql-yoga')
+
+const pubsub = new PubSub()
 
 // graphQL schema, defines simple query called info
 // schema has three special root types: query, mutation, subscription
@@ -31,6 +32,7 @@ const server = new GraphQLServer({
 		return {
 			...request,
 			prisma,
+			pubsub
 		}
 	},
 });
