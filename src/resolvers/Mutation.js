@@ -70,7 +70,7 @@ function deleteLink(parent, args, context, info) {
 	})
 }
 
-function vote(parent, args, context, info) {
+async function vote(parent, args, context, info) {
 	const userId = getUserId(context)
 	const vote = await context.prisma.vote.findOne({
 		where: {
