@@ -38,13 +38,16 @@ async function login(parent, args, context, info) {
 // which user is creating the link
 function post(parent, args, context, info) {
 	const userId = getUserId(context)
-	return context.prisma.link.create({
+	const newLink = context.prisma.link.create({
 		data: {
 			url: args.url, 
 			description: args.description,
 			postedBy: { connect: { id: userId } },
 		}
 	})
+	context.pubsub.publish("NEW_LINK", newLink)
+
+	return newLink
 }
 
 async function updateLink(parent, args, context, info) {
@@ -54,7 +57,8 @@ async function updateLink(parent, args, context, info) {
 	return await context.prisma.link.update({
 		data: {
 			url: args.url ? args.url : found.url,
-			description: args.description ? args.description : found.description
+			description: args.description ? args.description : found.description,
+			postedBy: { connect: { id: userId ? userId : found.postedBy } }
 		},
 		where: { id: ID }
 	})
@@ -66,10 +70,37 @@ function deleteLink(parent, args, context, info) {
 	})
 }
 
+function vote(parent, args, context, info) {
+	const userId = getUserId(context)
+	const vote = await context.prisma.vote.findOne({
+		where: {
+			linkId_userId: {
+				linkId: Number(args.linkId),
+				userId: userId
+			}
+		}
+	})
+
+	if (Boolean(vote)) {
+		throw new Error(`Already voted for link: ${args.linkId}`)
+	}
+
+	const newVote = context.prisma.vote.create({
+		data: {
+			user: { connect: { id: userId } },
+			link: { connect: { id: Number(args.linkId) } },
+		}
+	})
+	context.pubsub.publish("NEW_VOTE", newVote)
+
+	return newVote
+}
+
 module.exports = {
 	signup,
 	login,
 	post,
 	updateLink,
 	deleteLink,
+	vote,
 }
